@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "the-cool-ai-system"
+version = "0.1.0"
+description = "This is a cool end-to-end AI system"
+authors = ["kubano <jakubno3ak@gmail.com>"]
+readme = "README.md"
+packages = [{include = "the_cool_ai_system"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+bentoml = "^1.1.1"
+scikit-learn = "^1.3.0"
+pre-commit = "^3.3.3"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
