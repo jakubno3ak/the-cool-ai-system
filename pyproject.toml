@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "This is a cool end-to-end AI system"
 authors = ["kubano <jakubno3ak@gmail.com>"]
 readme = "README.md"
-packages = [{include = "the_cool_ai_system"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"

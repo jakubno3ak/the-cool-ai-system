@@ -1,8 +1,7 @@
-.PHONY: init
+.PHONY: setup
 
-SHELL := /bin/bash
-
-init:
+setup:
+	poetry shell && \
 	poetry lock && \
 	poetry install && \
 	pre-commit install
