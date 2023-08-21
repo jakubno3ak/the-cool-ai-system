@@ -41,6 +41,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         run: |
+          pwd
+          ls -la 
           poetry run bentoml build
           poetry run bentoml containerize iris_classifier:latest
           docker tag iris_classifier:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
