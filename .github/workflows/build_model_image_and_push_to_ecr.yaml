@@ -36,4 +36,12 @@ jobs:
         with:
           mask-password: 'true'
 
-      # Add your image push steps here
+      - name: Push image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        run: |
+          bentoml build
+          bentoml containerize iris_classifier:latest
+          docker tag iris_classifier:latest $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
