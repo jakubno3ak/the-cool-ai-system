@@ -1,6 +1,4 @@
 .PHONY: setup
 
 setup:
-	poetry shell && \
-	poetry lock && \
-	poetry install
+	poetry lock && poetry install
