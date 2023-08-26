@@ -12,3 +12,6 @@ python:
    - pandas
 models: # The model to be used for building the Bento.
 - iris_clf:latest
+api_server:
+  http:
+    port: 80
