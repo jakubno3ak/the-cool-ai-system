@@ -1,4 +1,4 @@
-resource "aws_vpc" "the-cool-ai-vpc" {
+resource "aws_vpc" "the_cool_ai_vpc" {
   cidr_block = "10.0.0.0/16"
 
   instance_tenancy = "default"
@@ -9,7 +9,7 @@ resource "aws_vpc" "the-cool-ai-vpc" {
 
 resource "aws_subnet" "public_subnets" {
   count  = length(var.public_subnet_cidrs)
-  vpc_id = aws_vpc.the-cool-ai-vpc.id
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
   cidr_block = element(var.public_subnet_cidrs, count.index)
   availability_zone = element(var.availability_zones, count.index)
   tags = {
@@ -19,7 +19,7 @@ resource "aws_subnet" "public_subnets" {
 
 resource "aws_subnet" "private_subnets" {
   count  = length(var.private_subnet_cidrs)
-  vpc_id = aws_vpc.the-cool-ai-vpc.id
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
   cidr_block = element(var.private_subnet_cidrs, count.index)
   availability_zone = element(var.availability_zones, count.index)
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "private_subnets" {
 }
 
 resource "aws_internet_gateway" "the_cool_ai_igw" {
-  vpc_id = aws_vpc.the-cool-ai-vpc.id
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
 
   tags = {
     Name = "TheCoolAIIGW"
@@ -37,7 +37,7 @@ resource "aws_internet_gateway" "the_cool_ai_igw" {
 }
 
 resource "aws_route_table" "rt_for_public" {
-  vpc_id = aws_vpc.the-cool-ai-vpc.id
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -57,7 +57,7 @@ resource "aws_route_table_association" "public_subnets_rt_association" {
 
 resource "aws_security_group" "for_public_resources" {
   name = "the_cool_ai_sg_allowing_for_public_on_3000"
-  vpc_id = aws_vpc.the-cool-ai-vpc.id
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
   description = "This is SG for model exposed publicly"
 
   ingress {
