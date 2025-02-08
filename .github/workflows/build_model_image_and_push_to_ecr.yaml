@@ -67,5 +67,5 @@ jobs:
           poetry run python src/save_model.py
           TAG=$(poetry run bentoml build --containerize -o tag)
           TAG=$(echo $TAG | awk -F ':' '{print $NF}')
-          docker tag iris_classifier:$TAG $ECR_REGISTRY/$ECR_REPOSITORY:the-cool-ai-system:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:the-cool-ai-system:latest
+          docker tag iris_classifier:$TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
