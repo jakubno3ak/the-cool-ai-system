@@ -35,8 +35,15 @@ jobs:
       - name: Terraform Apply (Create ECR)
         run: |
           cd infra
-          terraform apply -target=aws_ecr_repository.ecr -auto-approve
+          ECR_REPO_NAME="the-cool-ai-system-ecr"
+          REPO_EXISTS=$(aws ecr describe-repositories --repository-names "$ECR_REPO_NAME" 2>&1)
 
+          if echo "$REPO_EXISTS" | grep -q "RepositoryNotFoundException"; then
+            echo "ECR repository does not exist. Running Terraform to create it..."
+            terraform apply -target=aws_ecr_repository.ecr -auto-approve
+          else
+            echo "ECR repository already exists. Skipping creation step."
+          fi
 
   build_and_push:
     name: Build and Push Image to ECR
