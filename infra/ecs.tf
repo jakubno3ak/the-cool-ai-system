@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "the_cool_ai_task" {
   container_definitions = jsonencode([
     {
       name      = "the-cool-ai-container"
-      image     = "${aws_ecr_repository.the_cool_ai_ecr.repository_url}:latest"
+      image     = "${aws_ecr_repository.ecr.repository_url}:latest"
       essential = true
       portMappings = [
         {
