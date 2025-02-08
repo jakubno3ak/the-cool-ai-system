@@ -69,7 +69,3 @@ jobs:
           echo "Extracted TAG: $TAG"
           docker tag iris_classifier:$TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-
-    outputs:
-      ecr_image_uri: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:the-cool-ai-system:latest
