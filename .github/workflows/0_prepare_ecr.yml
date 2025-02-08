@@ -25,9 +25,15 @@ jobs:
         with:
           terraform_version: '1.4.0'
 
+      - name: Change to infra directory
+        run: cd infra
+
       - name: Terraform Init
-        run: terraform init
+        run: |
+          cd infra
+          terraform init
 
       - name: Terraform Apply (Create ECR)
         run: |
+          cd infra
           terraform apply -target=aws_ecr_repository.ecr -auto-approve
