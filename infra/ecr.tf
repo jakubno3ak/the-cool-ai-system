@@ -1,7 +1,7 @@
 resource "aws_ecr_repository" "ecr" {
   
   name = "the-cool-ai-system-ecr"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
   encryption_configuration {
     encryption_type = "KMS"
   }

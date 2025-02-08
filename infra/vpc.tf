@@ -121,7 +121,7 @@ resource "aws_alb_target_group" "the_cool_ai_tg" {
   vpc_id   = aws_vpc.the_cool_ai_vpc.id
 
   health_check {
-    path                = "/"
+    path                = "/health"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
