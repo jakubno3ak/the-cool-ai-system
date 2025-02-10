@@ -49,9 +49,9 @@ resource "aws_ecs_service" "the_cool_ai_service" {
   desired_count   = 1
 
   network_configuration {
-    subnets          = [aws_subnet.public_subnet.id]
+    subnets          = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
     security_groups  = [aws_security_group.ecs_sg.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
   load_balancer {

@@ -7,24 +7,47 @@ resource "aws_vpc" "the_cool_ai_vpc" {
   }
 }
 
-resource "aws_subnet" "public_subnet" {
+
+resource "aws_subnet" "public_subnet_a" {
   vpc_id                  = aws_vpc.the_cool_ai_vpc.id
-  cidr_block              = var.public_subnet_cidr
-  availability_zone       = var.availability_zone
+  cidr_block              = var.public_subnet_a_cidr
+  availability_zone       = var.availability_zone_a 
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "PublicSubnet"
+    Name = "PublicSubnetA"
   }
 }
 
-resource "aws_subnet" "private_subnet" {
-  vpc_id            = aws_vpc.the_cool_ai_vpc.id
-  cidr_block        = var.private_subnet_cidr
-  availability_zone = var.availability_zone
+
+resource "aws_subnet" "public_subnet_b" {
+  vpc_id                  = aws_vpc.the_cool_ai_vpc.id
+  cidr_block              = var.public_subnet_b_cidr
+  availability_zone       = var.availability_zone_b 
+  map_public_ip_on_launch = true
 
   tags = {
-    Name = "PrivateSubnet"
+    Name = "PublicSubnetB"
+  }
+}
+
+resource "aws_subnet" "private_subnet_a" {
+  vpc_id            = aws_vpc.the_cool_ai_vpc.id
+  cidr_block        = var.private_subnet_a_cidr
+  availability_zone = var.availability_zone_a
+
+  tags = {
+    Name = "PrivateSubnetA"
+  }
+}
+
+resource "aws_subnet" "private_subnet_b" {
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
+  cidr_block = var.private_subnet_b_cidr
+  availability_zone = var.availability_zone_b
+
+  tags = {
+    Name = "PrivateSubnetB"
   }
 }
 
@@ -49,10 +72,59 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-resource "aws_route_table_association" "public_subnet_rt_association" {
-  subnet_id      = aws_subnet.public_subnet.id
+
+resource "aws_route_table_association" "public_subnet_a_rt_association" {
+  subnet_id      = aws_subnet.public_subnet_a.id
   route_table_id = aws_route_table.public_rt.id
 }
+
+resource "aws_route_table_association" "public_subnet_b_rt_association" {
+  subnet_id      = aws_subnet.public_subnet_b.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_eip" "nat_eip" {
+  vpc = true
+
+  tags = {
+    "Name" = "TheCoolAINATEIP"
+  }
+}
+
+resource "aws_nat_gateway" "the_cool_ai_nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id = aws_subnet.public_subnet_a.id
+
+  tags = {
+    "Name" = "TheCoolAINATGW"
+  }
+
+  depends_on = [aws_internet_gateway.the_cool_ai_igw]
+}
+
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.the_cool_ai_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.the_cool_ai_nat_gw.id
+  }
+
+  tags = {
+    Name = "TheCoolAIPrivateRT"
+  }
+}
+
+resource "aws_route_table_association" "private_subnet_a_rt_association" {
+  subnet_id = aws_subnet.private_subnet_a.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_subnet_b_rt_association" {
+  subnet_id = aws_subnet.private_subnet_b.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
 
 resource "aws_security_group" "ecs_sg" {
   name        = "the_cool_ai_ecs_sg"
@@ -101,13 +173,12 @@ resource "aws_security_group" "alb_sg" {
     Name = "TheCoolAIALBSG"
   }
 }
-
 resource "aws_alb" "the_cool_ai_alb" {
-  name            = "the-cool-ai-alb"
-  internal        = false
+  name               = "the-cool-ai-alb"
+  internal           = false
   load_balancer_type = "application"
-  security_groups = [aws_security_group.alb_sg.id]
-  subnets         = [aws_subnet.public_subnet.id]
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
 
   tags = {
     Name = "TheCoolAIALB"
@@ -119,9 +190,10 @@ resource "aws_alb_target_group" "the_cool_ai_tg" {
   port     = 3000
   protocol = "HTTP"
   vpc_id   = aws_vpc.the_cool_ai_vpc.id
+  target_type = "ip"
 
   health_check {
-    path                = "/health"
+    path                = "/healthz"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
